@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "A representation of a web page content",
+  "type": "object",
+  "properties": {
+    "url": {
+      "description": "Web adress",
+      "type": "string"
+    },
+    "title": {
+      "description": "Title from title tag",
+      "type": "string"
+    },
+    "page_description": {
+      "description": "Description from meta tags",
+      "type": "string"
+    },
+    "content": {
+      "description": "Texts from main web page content",
+      "type": "string"
+    },
+    "links": {
+       "description": "Links, extracted from main web page content",
+      "type": "array",
+      "items": [{ "type": "string" }]
+    },
+    "data": {
+      "description": "HeaderArticle Data",
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "level": {
+              "description": "Level of the header. From 1 to 6",
+              "type": "integer"
+            },
+            "content": {
+              "description": "Content of the element",
+              "type": "string"
+            },
+            "responses": {
+              "description": "Content of the above text elements",
+              "type": "array",
+              "items": [{ "type": "string" }]
+            }
+          },
+          "required": [
+            "level",
+            "content",
+            "responses"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "url",
+    "title",
+    "page_description",
+    "content",
+    "links",
+    "data"
+  ]
+}
