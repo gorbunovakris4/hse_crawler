@@ -1,0 +1,12 @@
+{
+    "domain": "hse.ru",
+    "allow_subdomains": 1,
+    "parser": "lxml",
+    "save_header_article_pairs": 1,
+    "save_website_content": 1,
+    "black_list_classes": ["sidebar", "footer"],
+    "black_list_tags": ["footer"],
+    "header_tags": ["h1", "h2"],
+    "main_classes": ["main", "content"],
+    "text_tags": ["p", "span", "li", "a", "strong", "h3", "h4", "h5", "h6"]
+}
