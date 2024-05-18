@@ -1,5 +1,6 @@
 {
-    "domain": "hse",
+    "domain": "hse.ru",
+    "allow_subdomains": 1,
     "parser": "lxml",
     "save_header_article_pairs": 1,
     "save_website_content": 1,
