@@ -7,6 +7,7 @@ import json
 import io
 import logging
 import re
+import os
 import sys
 
 
@@ -52,7 +53,7 @@ class HtmlDocumentParser:
     def __init__(self):
         config = {}
         try:
-            with open('crawler_config.json', 'r') as config_file:
+            with open('configs/crawler_config.json', 'r') as config_file:
                 config = json.load(config_file)
         except Exception as e:
             print(f"Invalid crawler_config file. Using default configuration")
@@ -97,10 +98,16 @@ class HtmlDocumentParser:
         else:
             self.black_list_tags = ["footer"]
 
-        if "domain" in config:
-            self.url_regexp = f"(https?\:\/\/)([A-Za-z0-9\.\/]*)\.?{config['domain']}\.ru\/?[A-Za-z0-9_\.~\-\/]*"
+        if "domain" in config and config["allow_subdomains"]:
+            self.url_regexp = f"(https?\:\/\/)([A-Za-z0-9\.\/]*)\.?{config['domain'].split('.')[0]}\.{config['domain'].split('.')[1]}\/?[A-Za-z0-9_\.~\-\/]*"
+        elif "domain" in config and not config["allow_subdomains"]:
+            self.url_regexp = f"(https?\:\/\/){config['domain'].split('.')[0]}\.{config['domain'].split('.')[1]}\/?[A-Za-z0-9_\.~\-\/]*"
         else:
             self.url_regexp = "(https?\:\/\/)([A-Za-z0-9\.\/]*)\.?hse\.ru\/?[A-Za-z0-9_\.~\-\/]*"
+
+        self.pages_path = "pages/"
+        if not os.path.exists(self.pages_path):
+            os.makedirs(self.pages_path, exist_ok=True)
 
     @staticmethod
     def find_title(soup):
@@ -171,6 +178,13 @@ class HtmlDocumentParser:
                 return False
         return True
 
+    def check_elem_name(self, elem):
+        if not elem.name:
+            return True
+        if elem.name in self.black_list_tags:
+            return False
+        return True
+
     def process_main_content(self, soup, page, save_text=False):
         for class_ in self.main_classes:
             for main_content in soup.find_all(class_=class_):
@@ -184,18 +198,17 @@ class HtmlDocumentParser:
             content = ""
             for elem in body.children:
                 if isinstance(elem, Tag):
-                    if self.check_classes(elem):
+                    if self.check_elem_name(elem) and self.check_classes(elem):
                         content += self.get_cleared_text(elem)
                         links |= self.find_all_links_by_template(elem)
             if save_text:
                 page.content = content
             page.links = list(links)
 
-    @staticmethod
-    def save_page_data(page):
+    def save_page_data(self, page):
         hash_url = hash(page.url)
         hash_url += sys.maxsize + 1
-        with io.open(f"pages/{hash_url}.json", "w", encoding='utf-8') as f:
+        with io.open(self.pages_path + f"{hash_url}.json", "w", encoding='utf-8') as f:
             json.dump(page, f, ensure_ascii=False, cls=PageEncoder)
 
     def process_page(self, url, response):
