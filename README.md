@@ -46,7 +46,9 @@ python3 crawler.py
 * save_header_article_pairs - сохранять ли пары заголовок - текст для заголовков из header_tags
 * save_website_content - сохранять ли текст для элементов с классом из main_classes или для всех элементов, кроме указанных в black_list_classes, black_list_tags
 
-Файлы страниц сохраняют в формате json, [схема](page_doc_schema.json) доступна в файлах проекта, а также приведена на [рисунке](page_obj.png).
+Файлы страниц сохраняют в формате json, [схема](page_doc_schema.json) доступна в файлах проекта, а также приведена на рисунке:
+
+![рисунке](page_obj.png).
 
 ## Additional
 
